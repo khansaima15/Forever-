@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#09070b">
+  <title>Just for You ❤️</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #09070b; }
+    body { font-family: Georgia, serif; }
+    #book { position: fixed; inset: 0; display: grid; place-items: center; background: #09070b; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    #page { display: block; width: 100%; height: 100%; object-fit: contain; opacity: 1; transition: opacity 220ms ease; user-select: none; -webkit-user-drag: none; }
+    #page.changing { opacity: 0; }
+  </style>
+</head>
+<body>
+  <main id="book" aria-label="A surprise for you. Tap anywhere to turn the page.">
+    <img id="page" src="826a63e7-d243-8b28-dd0a-4ec1a4305852.jpeg" alt="Surprise page 1" draggable="false">
+  </main>
+  <script>
+    // Keep these in the intended page order, not GitHub's alphabetical order.
+    const pages = [
+      '826a63e7-d243-8b28-dd0a-4ec1a4305852.jpeg',
+      '33f2282e-46c1-7037-81e1-c72110d8454e.jpeg',
+      '949aca84-110e-0670-4e89-1bf5748bcad9.jpeg',
+      'BFD374AF-C0B6-4FE0-AF21-AE3889B62D87.png',
+      '9E1C0C61-EC09-4B4B-B774-4353070F2508.png',
+      '68a79cb9-a7b6-5869-8e77-976d171554af.jpeg',
+      '64c45859-dcaa-d119-b881-4660b343c4e4.jpeg',
+      'c52bec31-e6b6-a2d4-c184-77e5354dbdbd.jpeg'
+    ];
+    let current = 0;
+    const image = document.getElementById('page');
+    const book = document.getElementById('book');
+    let changing = false;
+
+    // Preload the remaining original images for smoother page changes.
+    pages.slice(1).forEach(src => { const preload = new Image(); preload.src = src; });
+
+    book.addEventListener('click', () => {
+      if (changing) return;
+      changing = true;
+      current = (current + 1) % pages.length;
+      image.classList.add('changing');
+      window.setTimeout(() => {
+        image.src = pages[current];
+        image.alt = `Surprise page ${current + 1}`;
+        image.onload = () => {
+          image.classList.remove('changing');
+          changing = false;
+        };
+        // Recover if an image cannot be loaded.
+        image.onerror = () => {
+          image.classList.remove('changing');
+          changing = false;
+        };
+      }, 180);
+    });
+  </script>
+</body>
+</html>
